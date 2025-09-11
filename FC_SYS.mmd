@@ -1,0 +1,103 @@
+graph LR
+
+subgraph cubeMX
+    subgraph 串口中断
+    uart_dma(串口定长接收中断)
+    it(中断服务程序)
+    end
+    subgraph 接收数据结构体
+    remoteData(RemoteData_t)
+        subgraph 接收数据结构体实体
+        kp(kp)
+        ki(ki)
+        kd(kd)
+        remote_throttle(remote_throttle)
+        target(target)
+        end
+    end
+	task5(串口数据解析)
+	q3(xRemoteDataQueue)
+	
+	subgraph nrf接收中断
+	nrf_irq(nrf_irq)
+	exti_gpio(gpio_it)
+	end
+    task6(nrf数据解析)
+    q4(xNrfDataQueue)
+end
+
+subgraph 物理世界
+vofa(上位机)
+pwm(电机控制)
+uart(串口数据)
+    subgraph 传感器
+    mpu6050(mpu6050)
+    ist8310(ist8310)
+    end
+nrf24l01(遥控接收机)
+end
+
+subgraph 任务1
+task1(Sensor) 
+q1(xSensorDataQueue)
+	subgraph 传感器结构体
+	sensorData(SensorData_t)
+        subgraph 传感器结构体实体
+        acc_x
+        acc_y
+        acc_z
+        gyro_x
+        gyro_y
+        gyro_z
+        mag_x
+        mag_y
+        mag_z
+        end
+	end
+end
+
+subgraph 任务2
+task2(Mahony解算)
+q2(xAttitudeDtaQueue)
+    subgraph 姿态结构体
+    attitudeData(AttitudeData_t)
+        subgraph 姿态结构体实体
+        继承SensorData_t
+        mahony_pitch(mahony_pitch)
+        mahony_roll(mahony_roll)
+        mahony_yaw(mahony_yaw)
+        end
+	end
+end
+
+subgraph 任务3
+task3(pid控制)
+end
+
+subgraph 任务4
+task4(串口回传上位机)
+q4(xTelemetryDataQueue)
+	subgraph 回传数据结构体
+	telemetryData(TelemetryData_t)
+        subgraph 回传数据结构体实体
+        继承AttitudeData_t
+        pitch_cmd(pitch_cmd)
+        roll_cmd(roll_cmd)
+        yaw_cmd(yaw_cmd)
+        继承RemoteData_t
+        end
+	end
+end
+
+mpu6050 & ist8310 -->|采集|task1 -->|装入传感器数据|acc_x & acc_y & acc_z & gyro_x & gyro_y & gyro_z & mag_x & mag_y & mag_z 
+sensorData-->|写入队列|q1 -->|读取|task2 
+task2 -->|装入姿态数据|mahony_pitch & mahony_roll & mahony_yaw 
+attitudeData-->|写入队列|q2 -->|读取|task3 
+task3 -->|装入pid解算结果|pitch_cmd & roll_cmd & yaw_cmd 
+telemetryData-->|写入队列|q4 -->|读取|task4
+uart_dma -->|触发|it -->|通知任务|task5 -->|装入解析后参数|kp & ki & kd & remote_throttle & target
+remoteData-->|写入队列|q3 -->|读取|task3
+task3 -->|控制|pwm
+task4 -->|发送|vofa
+uart -->|发送|uart_dma
+nrf24l01 -->|产生|nrf_irq -->|拉低触发|exti_gpio -->|通知|task6-->|装入解析后参数|kp & ki & kd & remote_throttle & target
