@@ -25,12 +25,12 @@ static uint8_t IST8310Check(IST8310ObjectType *ist);          // 一阶低通滤
  * @return IST8310ErrorType
  */
 IST8310ErrorType IST8310ObjectInit(IST8310ObjectType *ist, IST8310ReadBuf read,
-                                   IST8310WriteBuf write, IST8310GetIRQ irq,
+                                   IST8310WriteBuf write,
                                    IST8310Delayms delay) {
   uint8_t retry = 0;
 
   /*检查注入函数是否空缺*/
-  if ((ist == NULL) || (read == NULL) || (write == NULL) || (irq == NULL) ||
+  if ((ist == NULL) || (read == NULL) || (write == NULL) || 
       (delay == NULL)) {
     return IST8310_InitError;
   }

@@ -6,6 +6,7 @@
 
 /*依赖*/
 #include "ist8310_bsp.h"
+#include "mpu6050_bsp.h"
 #include "nrf24l01_bsp.h"
 #include "vofa.h"
 /*HAL*/
@@ -24,7 +25,7 @@
 float vofaBuffer[12]; // vofa发送数据前用到的临时存放数组
 
 /*设备对象*/
-mpu6050_struct mpu6050;
+MPU6050ObjectType mpu6050;
 NRF24L01ObjectType nrf24;
 IST8310ObjectType ist8310;
 /*通信数据*/
@@ -48,7 +49,8 @@ TelemetryData_t
  *
  */
 void FCSysInit(void) {
-  MPU6050_Init();
+  MPU6050ObjectInit(&mpu6050, BspMPU6050ReadBuf, BspMPU6050WriteBuf,
+                    BspMPU6050Delayms);
   IST8310ObjectInit(&ist8310, BspIST8310ReadBuf, BspIST8310WriteBuf,
                     BspIST8310Delayms);
   NRF24L01Initialization(&nrf24, NRF24ReadWriteByte, NRF24ChipSelect,
@@ -74,12 +76,12 @@ void FCSysInit(void) {
 void task_SensorGetData(void) {
   MPU6050GetRedirectValue(&mpu6050);
   IST8310_GET_MEG_VAL(&ist8310);
-  sensorData.acc_x = mpu6050.redirectAcc.x;
-  sensorData.acc_y = mpu6050.redirectAcc.y;
-  sensorData.acc_z = mpu6050.redirectAcc.z;
-  sensorData.gyro_x = mpu6050.redirectGyro.x;
-  sensorData.gyro_y = mpu6050.redirectGyro.y;
-  sensorData.gyro_z = mpu6050.redirectGyro.z;
+  sensorData.acc_x = mpu6050.data.redirectAcc.x;
+  sensorData.acc_y = mpu6050.data.redirectAcc.y;
+  sensorData.acc_z = mpu6050.data.redirectAcc.z;
+  sensorData.gyro_x = mpu6050.data.redirectGyro.x;
+  sensorData.gyro_y = mpu6050.data.redirectGyro.y;
+  sensorData.gyro_z = mpu6050.data.redirectGyro.z;
   sensorData.mag_x = ist8310.data.redirect_x;
   sensorData.mag_y = ist8310.data.redirect_y;
   sensorData.mag_z = ist8310.data.redirect_z;
@@ -115,7 +117,7 @@ void task_Control(float dt) {
   // 姿态控制(只在30%-70%的近似油门区间控制)
   else if (pidTarget.baseThrottle >= 1400 &&
            remoteData.vofa_remote == 2) { // pid自控制,保证油门在
-    PIDControlPosture(dt, &pidTarget, &mahony, &mpu6050, &pidRoll, &pidPitch,
+    PIDControlPosture(dt, &pidTarget, &mahony, &mpu6050.data, &pidRoll, &pidPitch,
                       &pidYaw, &pidRollRate, &pidPitchRate, &pidYawRate,
                       &pidRes);
     MotorSet(pidRes.outFR, pidRes.outFL, pidRes.outBR, pidRes.outBL);

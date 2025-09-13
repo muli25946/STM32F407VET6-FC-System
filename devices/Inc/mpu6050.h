@@ -59,6 +59,11 @@ typedef uint8_t (*MPU6050WriteBuf)(
     uint8_t len); // 声明写入指定寄存器指定长度数据的函数
 typedef void (*MPU6050Delayms)(uint32_t nTime); // 声明毫秒延迟函数
 
+MPU6050ErrorType MPU6050ObjectInit(MPU6050ObjectType *mpu6050,
+                                   MPU6050ReadBuf read, MPU6050WriteBuf write,
+                                   MPU6050Delayms delay);
+void MPU6050GetRedirectValue(MPU6050ObjectType *mpu6050);
+
 /*MPU6050 寄存器*/
 #define MPU6050_SMPLRT_DIV                                                     \
   0x19 // 指定陀螺仪输出频率的分频值以作为 MPU-6050 的采样率
