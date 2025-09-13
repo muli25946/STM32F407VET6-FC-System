@@ -1,0 +1,14 @@
+BasedOnStyle: GNU
+Language: C
+Standard: C11
+AlignConsecutiveMacros: true
+AlignConsecutiveAssignments: true
+AlignTrailingComments: true
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Attach
+ColumnLimit: 120
+IndentWidth: 4
+PointerAlignment: Right
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false

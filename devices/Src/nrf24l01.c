@@ -1,7 +1,6 @@
 #include "nrf24l01.h"
 #include "stddef.h"
 
-
 const uint8_t TX_ADDRESS[TX_ADR_WIDTH] = {0x34, 0x43, 0x10, 0x10,
                                           0x01}; // 发送地址
 const uint8_t RX_ADDRESS[RX_ADR_WIDTH] = {0x34, 0x43, 0x10, 0x10,
@@ -27,7 +26,7 @@ static void NRF24L01CSDefault(NRF24L01CSType cs);
 
 /**
  * @brief 启动NRF24L01发送一次数据包
- * 
+ *
  * @param nrf nrf24结构体对象
  * @param txbuf 待发送数据首地址
  * @return uint8_t 发送完成状况
