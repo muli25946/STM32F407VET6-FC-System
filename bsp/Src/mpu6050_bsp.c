@@ -1,8 +1,7 @@
 /*依赖*/
-#include "ist8310_bsp.h"
+#include "mpu6050_bsp.h"
+#include "mpu6050.h"
 /*HAL*/
-#include "i2c.h"
-#include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_i2c.h"
 #include <stdint.h>
 
@@ -14,9 +13,9 @@
  * @param len 接收的数据长度
  * @return uint8_t 状态值
  */
-uint8_t BspIST8310ReadBuf(uint8_t reg, uint8_t *pRxBuf, uint8_t len) {
+uint8_t BspMPU6050ReadBuf(uint8_t reg, uint8_t *pRxBuf, uint8_t len) {
   uint8_t status;
-  status = HAL_I2C_Mem_Read(&IST8310_IIC, IST8310_I2C_ADDR, reg,
+  status = HAL_I2C_Mem_Read(&MPU6050_IIC, MPU6050_ADDR, reg,
                             I2C_MEMADD_SIZE_8BIT, pRxBuf, len, 10);
   return status;
 }
@@ -29,9 +28,9 @@ uint8_t BspIST8310ReadBuf(uint8_t reg, uint8_t *pRxBuf, uint8_t len) {
  * @param len 发送的数据长度
  * @return uint8_t 状态值
  */
-uint8_t BspIST8310WriteBuf(uint8_t reg, uint8_t *pTxBuf, uint8_t len) {
+uint8_t BspMPU6050WriteBuf(uint8_t reg, uint8_t *pTxBuf, uint8_t len) {
   uint8_t status;
-  status = HAL_I2C_Mem_Write(&IST8310_IIC, IST8310_I2C_ADDR, reg,
+  status = HAL_I2C_Mem_Write(&MPU6050_IIC, MPU6050_ADDR, reg,
                              I2C_MEMADD_SIZE_8BIT, pTxBuf, len, 10);
   return status;
 }
@@ -41,4 +40,4 @@ uint8_t BspIST8310WriteBuf(uint8_t reg, uint8_t *pTxBuf, uint8_t len) {
  *
  * @param nTime 延迟时间ms
  */
-void BspIST8310Delayms(uint32_t nTime) { HAL_Delay(nTime); }
+void BspMPU6050Delayms(uint32_t nTime) { HAL_Delay(nTime); }

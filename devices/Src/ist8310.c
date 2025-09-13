@@ -5,14 +5,14 @@
 #include "stddef.h"
 
 static uint8_t IST8310WriteReg(IST8310ObjectType *ist, uint8_t reg,
-                               uint8_t data);
+                               uint8_t data); // 写一个寄存器值
 static uint8_t IST8310ReadReg(IST8310ObjectType *ist, uint8_t reg,
-                              uint8_t *rxData);
+                              uint8_t *rxData); // 读一个寄存器值
 static uint8_t IST8310WriteBuff(IST8310ObjectType *ist, uint8_t reg,
-                                uint8_t *pTxBuf, uint8_t len);
+                                uint8_t *pTxBuf, uint8_t len); // 写多个数据
 static uint8_t IST8310ReadBuff(IST8310ObjectType *ist, uint8_t reg,
-                               uint8_t *pRxBuf, uint8_t len);
-static uint8_t IST8310Check(IST8310ObjectType *ist);
+                               uint8_t *pRxBuf, uint8_t len); // 读多个数据
+static uint8_t IST8310Check(IST8310ObjectType *ist);          // 一阶低通滤波器
 
 /**
  * @brief ist8310对象初始化函数

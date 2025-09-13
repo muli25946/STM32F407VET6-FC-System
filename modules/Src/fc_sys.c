@@ -3,14 +3,18 @@
    口  Y
 4顺   3逆
 */
-#include "fc_sys.h"
-#include "cmsis_os2.h"
-#include "main.h"
+
+/*依赖*/
+#include "ist8310_bsp.h"
 #include "nrf24l01_bsp.h"
+#include "vofa.h"
+/*HAL*/
+#include "cmsis_os2.h"
+#include "fc_sys.h"
+#include "main.h"
 #include "stm32f4xx_hal_cortex.h"
 #include "stm32f4xx_hal_uart.h"
 #include "usart.h"
-#include "vofa.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -19,17 +23,20 @@
 
 float vofaBuffer[12]; // vofa发送数据前用到的临时存放数组
 
+/*设备对象*/
 mpu6050_struct mpu6050;
-ist8310_struct ist8310;
 NRF24L01ObjectType nrf24;
+IST8310ObjectType ist8310;
+/*通信数据*/
 VofaRxFloatFrame vofaRxFrame;
 VofaTxFloatFrame vofaTxFrame = {.pFloat = vofaBuffer};
+/*控制数据*/
 PIDControllerType pidPitchRate, pidRollRate, pidYawRate; // pid角度环控制器
 PIDControllerType pidPitch, pidRoll, pidYaw;             // pid角度控制器
 PIDOutType pidRes;       // PID计算得到的占空比存放结构体
 PIDTargetType pidTarget; // 期望PID达到的目标值
 MahonyType mahony;       // mahony计算的结果
-
+/*数据传递通道*/
 SensorData_t sensorData; // 用于将传感器数据装入队列的结构体,定义在fc_sys.c中
 AttitudeData_t attitudeData; // 用于将姿态数据装入队列的结构体,定义在fc_sys.c中
 RemoteData_t remoteData; // 用于将遥控接收数据装入队列的结构体,定义在fc_sys.c中
@@ -42,7 +49,8 @@ TelemetryData_t
  */
 void FCSysInit(void) {
   MPU6050_Init();
-  IST8310_Init();
+  IST8310ObjectInit(&ist8310, BspIST8310ReadBuf, BspIST8310WriteBuf,
+                    BspIST8310Delayms);
   NRF24L01Initialization(&nrf24, NRF24ReadWriteByte, NRF24ChipSelect,
                          NRF24ChipEnable, NRF24GetIRQ, NRF24Delayms);
 
@@ -72,9 +80,9 @@ void task_SensorGetData(void) {
   sensorData.gyro_x = mpu6050.redirectGyro.x;
   sensorData.gyro_y = mpu6050.redirectGyro.y;
   sensorData.gyro_z = mpu6050.redirectGyro.z;
-  sensorData.mag_x = ist8310.redirect_x;
-  sensorData.mag_y = ist8310.redirect_y;
-  sensorData.mag_z = ist8310.redirect_z;
+  sensorData.mag_x = ist8310.data.redirect_x;
+  sensorData.mag_y = ist8310.data.redirect_y;
+  sensorData.mag_z = ist8310.data.redirect_z;
 }
 
 /**

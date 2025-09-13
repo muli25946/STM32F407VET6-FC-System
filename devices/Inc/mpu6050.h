@@ -13,12 +13,24 @@
 
 #include <stdint.h>
 
+// MPU6050地址
+#define MPU6050_ADDR 0x68 << 1
+#define MPU6050_IIC hi2c2
+
+typedef enum {
+  MPU6050_NoError,
+  MPU6050_InitError,
+  MPU6050_Absent
+} MPU6050ErrorType;
+
+/*物理值结构体*/
 typedef struct physicalValue {
   float x;
   float y;
   float z;
 } PhysicalType;
 
+/*数据结构体*/
 typedef struct MPU6050 {
   int16_t acc[3];  // 对应xyz
   int16_t gyro[3]; // 对应xyz
@@ -27,14 +39,27 @@ typedef struct MPU6050 {
   PhysicalType redirectGyro;
 } mpu6050_struct;
 
-// Function prototypes
-uint8_t MPU6050_Init(void);
-void MPU6050GetRedirectValue(mpu6050_struct *mpu6050);
+/*MPU6050对象类型*/
+typedef struct {
+  /*数据*/
+  mpu6050_struct data;
+  /*方法*/
+  uint8_t (*ReadBuf)(uint8_t reg, uint8_t *pRxBuf,
+                     uint8_t len); // 声明读取指定寄存器上多个字节的函数
+  uint8_t (*WriteBuf)(uint8_t reg, uint8_t *pTxBuf,
+                      uint8_t len); // 声明写入指定寄存器指定长度数据的函数
+  void (*Delayms)(uint32_t nTime);  // 声明毫秒延迟函数
+} MPU6050ObjectType;
 
-// MPU6050 I2C address
-#define MPU6050_ADDR 0x68 << 1
+typedef uint8_t (*MPU6050ReadBuf)(
+    uint8_t reg, uint8_t *pRxBuf,
+    uint8_t len); // 声明读取指定寄存器上多个字节的函数
+typedef uint8_t (*MPU6050WriteBuf)(
+    uint8_t reg, uint8_t *pTxBuf,
+    uint8_t len); // 声明写入指定寄存器指定长度数据的函数
+typedef void (*MPU6050Delayms)(uint32_t nTime); // 声明毫秒延迟函数
 
-// MPU6050 registers
+/*MPU6050 寄存器*/
 #define MPU6050_SMPLRT_DIV                                                     \
   0x19 // 指定陀螺仪输出频率的分频值以作为 MPU-6050 的采样率
 #define MPU6050_CONFIG                                                         \
@@ -59,5 +84,6 @@ void MPU6050GetRedirectValue(mpu6050_struct *mpu6050);
 
 #define MPU6050_PWR_MGMT_1 0x6B // 用户配置电源模式和时钟源
 #define MPU6050_WHO_AM_I 0x75   // 这个寄存器用来查证该设备的身份,默认0x68
+#define MPU6050_DEVICE_ID 0x68
 
 #endif // !MPU6050_H
