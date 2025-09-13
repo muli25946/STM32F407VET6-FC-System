@@ -3,11 +3,12 @@
   使用方式：使用cubemx打开.ioc文件，生成代码后再将各文件夹添加到CMakeLists.txt中。该项目使用clangd作为语言服务器，请自行学习并配置.clangd
 # 硬件图示
 ![连接图示](./硬件示意图.png)
-IIC1 -->IST8310
-IIC2 -->MPU6050
-IIC3 -->OLED(0.96',SSD1306驱动)
-SPI1 -->NRF24L01
-SPI2 -->BMP280
+- IIC1 -->IST8310
+- IIC2 -->MPU6050
+- IIC3 -->OLED(0.96',SSD1306驱动)
+- SPI1 -->NRF24L01
+- SPI2 -->BMP280
+- TIM4 -->PWM输出
 # 时间线
 ## 2025/9/10 
 - 完成了mpu6050 ist8310的驱动
