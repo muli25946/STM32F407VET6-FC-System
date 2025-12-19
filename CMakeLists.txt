@@ -48,8 +48,13 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # 设备源文件
 file(GLOB_RECURSE SOURCES
     ${CMAKE_SOURCE_DIR}/bsp/Src/*.c
-    ${CMAKE_SOURCE_DIR}/modules/Src/*.c
-    ${CMAKE_SOURCE_DIR}/devices/Src/*.c
+    ${CMAKE_SOURCE_DIR}/fc_ctl/*.c
+    ${CMAKE_SOURCE_DIR}/modules/mahony/*.c
+    ${CMAKE_SOURCE_DIR}/modules/pid/*.c
+    ${CMAKE_SOURCE_DIR}/modules/vofa/*.c
+    ${CMAKE_SOURCE_DIR}/devices/ist8310/*.c
+    ${CMAKE_SOURCE_DIR}/devices/mpu6050/*.c
+    ${CMAKE_SOURCE_DIR}/devices/nrf24l01/*.c
 )
 
 # DSP sources
@@ -72,8 +77,13 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
     # Add user defined include paths
     ${CMAKE_SOURCE_DIR}/bsp/Inc
-    ${CMAKE_SOURCE_DIR}/modules/Inc
-    ${CMAKE_SOURCE_DIR}/devices/Inc
+    ${CMAKE_SOURCE_DIR}/fc_ctl
+    ${CMAKE_SOURCE_DIR}/modules/mahony
+    ${CMAKE_SOURCE_DIR}/modules/pid
+    ${CMAKE_SOURCE_DIR}/modules/vofa
+    ${CMAKE_SOURCE_DIR}/devices/ist8310
+    ${CMAKE_SOURCE_DIR}/devices/mpu6050
+    ${CMAKE_SOURCE_DIR}/devices/nrf24l01
 
     # CMSIS Core + DSP
     ${CMAKE_SOURCE_DIR}/Drivers/CMSIS/Core/Include

@@ -7,7 +7,6 @@
 #include "spi.h"
 #include <stdint.h>
 
-
 #define NRF_SPI hspi1
 
 uint8_t NRF24ReadWriteByte(uint8_t TxData); // 声明向nRF24L01读写一个字节的函数
